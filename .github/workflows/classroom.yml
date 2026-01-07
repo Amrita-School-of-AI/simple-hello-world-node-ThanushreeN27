@@ -1,0 +1,51 @@
+name: Autograding Tests
+on:
+  - push
+  - workflow_dispatch
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-22.04
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    # 1. Checkout Code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+    # 2. Setup ROS 2 Humble Environment
+      - name: Setup ROS 2
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: humble
+
+    # 3. Build Workspace
+      - name: Build Workspace
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --packages-select ros2_hello_world
+        shell: bash
+
+    # 4. Run the Grader
+      # This runs our script. If it exits 0, student gets 100 points.
+      # If it exits 1, student gets 0 points.
+      - name: ROS2 Node Test
+        id: ros-test
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: "Hello World Check"
+          setup-command: "chmod +x .github/scripts/grade.sh"
+          command: "bash .github/scripts/grade.sh"
+          timeout: 10
+          max-score: 100  
+      
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          # This links the result of the step with ID 'ros-test' to the reporter
+          ROS-TEST_RESULTS: "${{ steps.ros-test.outputs.result }}"
+        with:
+          runners: ros-test
