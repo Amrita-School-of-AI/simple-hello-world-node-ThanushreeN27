@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.8)
+project(ros2_hello_world)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+<<<<<<< HEAD
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+
+# Add executable target
+add_executable(hello_node src/hello_node.cpp)
+
+# Link dependencies
+ament_target_dependencies(hello_node rclcpp)
+
+# Install the executable
+install(TARGETS hello_node
+  DESTINATION lib/${PROJECT_NAME})
+=======
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+
+# TODO: Add the executable target named 'hello_node'
+# 1. Add executable using src/hello_node.cpp
+# 2. Add dependencies (ament_target_dependencies) for rclcpp
+# 3. Install the target to the DESTINATION lib/${PROJECT_NAME}
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+>>>>>>> a1836a9da273a7f28624064c86f3d6d8b6386c01
+
+ament_package()
